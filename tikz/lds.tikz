@@ -1,0 +1,16 @@
+\begin{tikzpicture}
+\tikzstyle{main}=[circle, minimum size = 10mm, thick, draw =black!80, node distance = 16mm]
+\tikzstyle{connect}=[-latex, thick]
+\tikzstyle{box}=[rectangle, draw=black!100]
+    
+    \node[obs](xt){$x_t$};
+    \node[obs, right=of xt](xt1){$x_{t + 1}$};
+    \node[latent, above=of x](a){$A$};
+    
+    \edge{a}{xt1};
+    \edge{xt}{xt1};
+    
+    \plate{plate1}{
+        (xt) (xt1)
+    } {$N$};
+\end{tikzpicture}

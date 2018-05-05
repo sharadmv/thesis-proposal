@@ -1,0 +1,12 @@
+\begin{tikzpicture}
+\tikzstyle{main}=[circle, minimum size = 10mm, thick, draw =black!80, node distance = 16mm]
+\tikzstyle{connect}=[-latex, thick]
+\tikzstyle{box}=[rectangle, draw=black!100]
+    
+    \node[obs](x){$\bm{y}$};
+    \node[latent, above=of x, minimum size=2cm](s){\Large $S$};
+    \node[obs, right=of s](c){$c$};
+    
+    \edge{s}{x};
+    \edge[-]{c}{s};
+\end{tikzpicture}
