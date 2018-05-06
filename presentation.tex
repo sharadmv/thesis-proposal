@@ -116,7 +116,7 @@
     \end{subfigure}
   \end{figure}
   \pause
-  Structure learning seeks out intuitive relationships in data.
+  Structure learning seeks out intuitive behavior in data
 
 \end{frame}
 
@@ -147,7 +147,7 @@
 
 \begin{frame}{Interactive structure learning}
 
-  \multiinclude[<+->][graphics={width=\textwidth}, format=png, start=1]{img/structure-interaction}
+  \multiinclude[<+>][graphics={width=\textwidth}, format=png, start=1]{img/structure-interaction}
 
   \onslide<2->{Algorithm provides a structure $S$}
   \onslide<3->{and human provides a constraint $c$}
@@ -165,18 +165,18 @@
 
   \only<3>{\includegraphics{tikz/interactive-structure}}
 
-  \only<2>{We are interested in $p(S | \bm{y})$}
+  \onslide<2>{\textbf{Structure learning:} We are interested in $p(S | \bm{y})$}
 
-  \only<3>{We are interested in $p(S | \bm{y}, c)$}
+  \onslide<3>{\textbf{Interactive structure learning:} We are interested in $p(S | \bm{y}, c)$}
 
 \end{frame}
 
-\begin{frame}{Current work}
+\begin{frame}{Work in interactive structure learning}
   \begin{itemize}
     \pause
-    \item Flat clustering - \cite{wat}
+    \item Flat clustering - \cite{NelsonRevisitingConstraints}
     \pause
-  \item \structure<3>{Hierarchical clustering - Vikram and Dasgupta, ICML 2015}
+  \item \structure<3>{Hierarchical clustering - \cite{Vikram2016}}
   \end{itemize}
 \end{frame}
 
@@ -190,7 +190,7 @@
   \begin{itemize}
     \item<4-> User provides a \alert{triplet}. $a$ and $b$
   should be in a subtree together without $c$.
-    \item<5-> We show the user the induced tree on the subset of the data $T|_S$.
+    \item<5-> We show the user the induced tree on a subset of the data $T|_S$.
   \end{itemize}
 \end{frame}
 
@@ -206,10 +206,14 @@
 
 \begin{frame}{Bayesian hierarchical clustering}
   Define a generative model for the data.
+  $\begin{array}{l}\includegraphics[scale=0.4]{tikz/tmc}\end{array}$ 
+  
   \begin{itemize}
-    \item<1->   Prior distribution $P(T)$, (Dirichlet diffusion tree,
+    \pause
+    \item Prior distribution $p(\tau)$, (Dirichlet diffusion tree,
       Kingman's coalescent)
-    \item<3->   Likelihood model $P(\theta | T), P(X | T, \theta)$, (Brownian motion,
+    \pause
+    \item Likelihood model $P(\bm{x} | \tau)$, (Brownian motion,
       Dirichlet-multinomial diffusion)
   %\begin{center}
     %\includegraphics<2>[width=\textwidth]{img/diffusion-1}
@@ -220,15 +224,15 @@
   \end{itemize}
 
   \begin{center}
-    \includegraphics<2-3>[width=\textwidth]{img/tree-data-0}
-    \includegraphics<4>[width=\textwidth]{img/tree-data-1}
+    \includegraphics<2-3>[width=0.8\textwidth]{img/tree-data-0}
+    \includegraphics<4>[width=0.8\textwidth]{img/tree-data-1}
   \end{center}
 
 \end{frame}
 
 \begin{frame}{Inference}
   We are interested in the posterior distribution
-  $P(T | X)$, which we compute
+  $p(\tau | \bm{x})$, which we compute
   via approximate methods like Metropolis-Hastings.
 
   \uncover<2->{A popular proposal distribution is \alert{subtree-prune
@@ -239,9 +243,6 @@
     \includegraphics<4>[width=\textwidth]{img/spr-2}
     \includegraphics<5->[width=\textwidth]{img/spr-3}
   \end{center}
-
-  \uncover<6->{Parameters $\theta$ can be sampled via Gibbs sampling
-  or integrated out via belief propagation.}
 
 \end{frame}
 
@@ -614,8 +615,10 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   \end{center}
 \end{frame}
 
-\section{Applications}
-
+\begin{frame}[allowframebreaks]{References}
+    \bibliographystyle{unsrtnat}
+    \bibliography{mendeley} 
+\end{frame}
 %\begin{frame}{Messages in SVAE}
   %The message from a \textbf{non-conjugate, non-exponential family} observation $X$ to a parent $Y$ is
   %\begin{align*}
