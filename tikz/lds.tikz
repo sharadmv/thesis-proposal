@@ -5,7 +5,7 @@
     
     \node[obs](xt){$x_t$};
     \node[obs, right=of xt](xt1){$x_{t + 1}$};
-    \node[latent, above=of x](a){$A$};
+    \node[latent, above=of xt](a){$A$};
     
     \edge{a}{xt1};
     \edge{xt}{xt1};
