@@ -63,35 +63,23 @@
 
 \begin{frame}{Bayesian unsupervised learning}
   \centering
-  \begin{figure}
-    \centering
-    \pause
-    \begin{subfigure}[t]{0.20\textwidth}
+  \begin{columns}[T]
+    \begin{column}{0.5\textwidth}
+      \begin{overlayarea}{\textwidth}{7cm}
+        \begin{center}
+          \Large \textbf{Structure}\\ \vspace{10pt}
+          \multiinclude[<+>][format=png, start=1]{img/bayesian-intro-left}
+        \end{center}
+      \end{overlayarea}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{overlayarea}{\textwidth}{5cm}
         \centering
-        \includegraphics{tikz/gmm}
-        \caption{Gaussian mixture model}
-    \end{subfigure}
-    \pause
-    \hfill
-    \begin{subfigure}[t]{0.20\textwidth}
-        \centering
-        \includegraphics{tikz/tmc}
-        \caption{Bayesian hierarchical clustering}
-    \end{subfigure}
-    \pause
-    \hfill
-    \begin{subfigure}[t]{0.20\textwidth}
-        \centering
-        \includegraphics{tikz/lds}
-        \caption{Bayesian linear dynamical system}
-    \end{subfigure}
-    \pause
-    \begin{subfigure}[t]{0.20\textwidth}
-        \centering
-        \includegraphics{tikz/vae}
-        \caption{Variational autoencoder}
-    \end{subfigure}
-  \end{figure}
+        \Large \textbf{Embedding} \\ \vspace{60pt}
+        \includegraphics[]{img/bayesian-intro-right-1}
+      \end{overlayarea}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Research overview}
