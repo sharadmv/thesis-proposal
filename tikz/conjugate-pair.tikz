@@ -1,0 +1,10 @@
+\begin{tikzpicture}
+\tikzstyle{main}=[circle, minimum size = 10mm, thick, draw =black!80, node distance = 16mm]
+\tikzstyle{connect}=[-latex, thick]
+\tikzstyle{box}=[rectangle, draw=black!100]
+    
+    \node[latent](x){$x$};
+    \node[latent, below=of x](y){$y$};
+    
+    \edge{x}{y};
+\end{tikzpicture}

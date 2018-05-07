@@ -1,7 +1,5 @@
 \documentclass[10pt, compress]{beamer}
 
-\include{defs}
-\usetheme{metropolis}           % Use metropolis theme
 
 \PassOptionsToPackage{export}{adjustbox}
 \usepackage{
@@ -10,7 +8,9 @@
   tikzscale, 
   float,
   caption, subcaption,
-  xmpmulti
+  fancybox,
+  xmpmulti,
+  empheq
 }
 \usetikzlibrary{fit, positioning, bayesnet}
 \usepackage[mode=buildnew]{standalone}
@@ -23,12 +23,14 @@
 %\usemintedstyle{trac}
 
 \title{Bayesian learning of structured embeddings}
-\subtitle{}
+\subtitle{Thesis proposal}
 \date{\today}
 \author{Sharad Vikram}
 \institute{UCSD}
 
 %\setcounter{tocdepth}{1}
+\include{defs}
+\usetheme{metropolis}           % Use metropolis theme
 
 \begin{document}
 
@@ -87,7 +89,7 @@
   \multiinclude[<+>][format=png, graphics={width=0.8\textwidth}]{img/overview}
 \end{frame}
 
-\section{Bayesian structure learning}
+\section{Structure learning}
 
 \begin{frame}{Structure learning}
   \centering
@@ -177,7 +179,7 @@
     \item Flat clustering - \cite{NelsonRevisitingConstraints, ShentalComputingConstraints, LangeLearningData} \\
     \pause
     \begin{center}
-    \includegraphics[]{img/must-link} \includegraphics[]{img/mustnot-link}
+    \includegraphics[]{img/must-link} \hspace{20pt} \includegraphics[]{img/mustnot-link}
     \end{center}
     \pause
     \item Hierarchical clustering - \cite{Vikram2016} \pause $\begin{array}{l}\includegraphics{img/overview-digit-1}\end{array}$
@@ -238,14 +240,14 @@
   We are interested in the posterior distribution
   $p(\tau | \bm{x})$, which we compute
   via approximate methods like Metropolis-Hastings.
+  
+  \pause
 
-  \uncover<2->{A popular proposal distribution is \alert{subtree-prune
-  and regraft} (SPR).}
+  A popular proposal distribution is \alert{subtree-prune
+  and regraft} (SPR).
 
   \begin{center}
-    \includegraphics<3>[width=\textwidth]{img/spr-1}
-    \includegraphics<4>[width=\textwidth]{img/spr-2}
-    \includegraphics<5->[width=\textwidth]{img/spr-3}
+    \multiinclude[<+>][format=png, graphics={width=\textwidth}, start=1]{img/spr}
   \end{center}
 
 \end{frame}
@@ -313,12 +315,18 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 \end{frame}
 \fi
 
-\begin{frame}{IBHC results}
+\begin{frame}{Results}
   \centering
+  \vspace{10pt}
   \frame{\includegraphics[width=0.8\textwidth]{img/trees/MNIST-result}}
 \end{frame}
 
-\section{Bayesian embedding learning}
+\begin{frame}{Overview}
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/overview-1}
+\end{frame}
+
+\section{Embedding learning}
 
 \begin{frame}{Bayesian embedding learning}
   \centering
@@ -331,11 +339,12 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
       \end{column}
     \pause
       \begin{column}{0.3\textwidth}
-        \includegraphics{tikz/embedding}
+        \includegraphics{tikz/vae}
       \end{column}
     \end{columns}
   \end{center}
 \end{frame}
+
 \begin{frame}{Variational autoencoder}
   The VAE is a generative model for data.
   \begin{align*}
@@ -370,15 +379,16 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
       \item Instantiate \emph{variational distribution} $q_\phi(\theta, x)$
         where $\phi$ are free parameters
         \pause
-      \item Define loss $\textrm{KL}(q_\phi(\theta, x)\|p(\theta, x | y))$
+      \item Define objective $\elbo[q_\phi(\theta, x)]$.
         \pause
-      \item Minimize loss $\phi^* = \argmin_\phi \textrm{KL}(q_\phi(\theta, x)\|p(\theta, x | y))$
+      \item Maximize objective $\phi^* = \argmax_\phi \elbo[q_\phi(\theta, x)]$
     \end{itemize}
     \pause
     If $q(\theta, x)$ is sufficiently expressive,
     it can approximate $p(\theta, x | y)$ quite well.
 \end{frame}
 
+\iffalse
 \begin{frame}{KL-divergence}
   Kullback-Leibler (KL) divergence
   is a measure of how far one probability distribution
@@ -396,13 +406,16 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
     \item $\textrm{KL}(q(x)\|p(x)) = 0$ if $q(x) = p(x)$.
     \item Asymmetric
   \end{itemize}
-
 \end{frame}
 
+\fi
+
 \begin{frame}{Evidence lower bound}
-  In general, we cannot even compute $KL(q(\theta, x)\|p(\theta, x | y))$
-  because
-  we don't know the posterior $p(\theta, x | y)$.
+  This loss function is called the \alert{evidence lower bound} (ELBO).
+  
+  \pause
+  
+  It has a unique relationship to the KL divergence $ \KL(q(\theta, x)\|p(\theta, x|y))$.
 
   \pause
   We can rewrite the KL divergence as
@@ -415,19 +428,20 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   \end{align*}
 
   \pause
-  and maximize the \emph{evidence lower bound} (ELBO)
+  
   \begin{align*}
-    \L[q(\theta, x)] &= \E_{q(\theta, z)}\left[\log\frac{p(y, \theta, x)}{q(\theta, x)}\right]
+    \elbo[q(\theta, x)] &\triangleq \E_{q(\theta, z)}\left[\log\frac{p(y, \theta, x)}{q(\theta, x)}\right]
   \end{align*}
 \end{frame}
+
 \begin{frame}{Variational autoencoder}
   \textbf{Basic strategy:} gradient-based variational inference
 
   \pause
 
-  \begin{itemize}
-    \item Pick $q_\phi(x | y)$ to be a \emph{neural network} parameterized by $\phi$ (both differentiable and sampleable)
-  \end{itemize}
+  \begin{center}
+      \ovalbox{Pick $q_\phi(x | y)$ to be a \emph{neural network} parameterized by $\phi$}
+  \end{center}
 
   \pause
   Let $r_\phi(y)$ be a neural network (with weights $\phi$)
@@ -437,45 +451,40 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   \end{align*}
 
   \pause
-
-  %\begin{itemize}
-    %\item Use the reparametrization trick to lower variance of gradients
-  %\end{itemize}
-  \pause
   Goal: learn the weights for the two neural networks $(\mu_\gamma(x), \Sigma_\gamma(x))$ and $r_\phi(y)$
   via SGD on the ELBO.
   \pause
   \begin{align*}
-    \L[q(x | y)] &= \E_{q(x | y)}\left[\log p(y, x) - \log q(x | y)\right]
+    \elbo[q_\phi(x | y)] &= \E_{q_\phi(x | y)}\left[\log\frac{p(y, x)}{q_\phi(x | y)}\right]
   \end{align*}
 \end{frame}
 
 \begin{frame}{Monte-Carlo ELBO}
-  We can't compute the ELBO because of the expectation w.r.t $q_\phi(z|x)$.
+  We can't compute the ELBO because of the expectation w.r.t $q_\phi(x|y)$.
   \begin{align*}
-    \L[q(x | y)] &= \E_{q(x | y)}\left[\log p(y, x) - \log q(x | y)\right]
+    \elbo[q_\phi(x | y)] &= \E_{q_\phi(x | y)}\left[\log \frac{p(y, x)}{q_\phi(x | y)}\right]
   \end{align*}
   We can sample from $q$ however:
   \begin{align*}
-    \hat{\L}[q(x | y)] &= \frac{1}{L}\sum_{l = 1}^L \left[\log p(y, x^{(l)}) - \log q(x^{(l)} | y)\right]
+    \hat{\elbo}[q_\phi(x | y)] &\triangleq \frac{1}{L}\sum_{l = 1}^L \log \frac{p(y, x^{(l)})}{q_\phi(x^{(l)} | y)}
   \end{align*}
   Now, we can compute gradients.
   \begin{align*}
-    \gamma^{(t + 1)} &\leftarrow \gamma^t - \rho \nabla_\gamma \hat{\L} \\
-    \phi^{(t + 1)} &\leftarrow \phi^t - \rho \nabla_\phi \hat{\L} \\
+    \gamma^{(t + 1)} &\leftarrow \gamma^t + \rho \nabla_\gamma \hat{\elbo} \\
+    \phi^{(t + 1)} &\leftarrow \phi^t + \rho \nabla_\phi \hat{\elbo} \\
   \end{align*}
 \end{frame}
 
-\begin{frame}{Recognition networks}
+\section{Structured embedding learning}
 
-
+\begin{frame}[standout]
   \centering
-  VAE uses neural networks as a tool for approximate inference.
-  \pause
-  Is this idea generalizable?
+  Can we generalize using neural networks as a tool
+  for approximate inference?
 \end{frame}
 
 \begin{frame}{Structured variational autoencoder}
+  SVAE - \cite{Johnson2016}
   \centering
   \begin{columns}
     \begin{column}{0.3\textwidth}
@@ -484,23 +493,25 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
     \begin{column}{0.3\textwidth}
       \begin{align*}
         \pi &\sim \textrm{Dirichlet}(\alpha) \\
-        \{\mu_k, \Sigma_k\}_{ik = 1}^K &\sim \NIW(\mu_0, \Sigma_0) \\
-        \{z_i\}_{i = 1}^N &\sim \textrm{Categorical}(\pi) \\
-        \{x_i\}_{i = 1}^N &\sim \N(\mu_{z_o}, \Sigma_{z_i})
+        \{\mu_k, \Sigma_k\}_{k = 1}^K &\sim \NIW(\Psi, \mu_0, \kappa, \nu) \\
+        z_i | \pi &\sim \textrm{Categorical}(\pi) \\
+        x_i | z_i, \{\mu_k, \Sigma_k\}_{k = 1}^K \ &\sim \N(\mu_{z_i}, \Sigma_{z_i}) \\
+        y_i | x_i &\sim \N(\mu_\gamma(x_i), \Sigma_\gamma(x_i))
       \end{align*}
     \end{column}
   \end{columns}
 \end{frame}
 
 \begin{frame}{Why SVAE?}
-
-  \pause
   \begin{center}
+    \begin{figure}
     \includegraphics[frame,width=\textwidth]{img/svae-example}
+    \caption{\cite{Johnson2016}}
+    \end{figure}
   \end{center}
 
   \pause
-  In this scenario, the SVAE enables modeling non-Gaussian cluster shapes \cite{svae}.
+  In this scenario, the SVAE enables modeling non-Gaussian cluster shapes.
 \end{frame}
 
 \begin{frame}{Structured variational autoencoder}
@@ -512,14 +523,32 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
     \begin{column}{0.3\textwidth}
       \begin{align*}
         \pi &\sim \textrm{Dirichlet}(\alpha) \\
-        \{\mu_k, \Sigma_k\}_{ik = 1}^K &\sim \NIW(\mu_0, \Sigma_0) \\
-        \{z_i\}_{i = 1}^N &\sim \textrm{Categorical}(\pi) \\
-        \{x_i\}_{i = 1}^N &\sim \N(\mu_{z_o}, \Sigma_{z_i})
+        \{\mu_k, \Sigma_k\}_{k = 1}^K &\sim \NIW(\Psi, \mu_0, \kappa, \nu) \\
+        z_i | \pi &\sim \textrm{Categorical}(\pi) \\
+        x_i | z_i, \{\mu_k, \Sigma_k\}_{k = 1}^K \ &\sim \N(\mu_{z_i}, \Sigma_{z_i}) \\
+        y_i | x_i &\sim \N(\mu_\gamma(x_i), \Sigma_\gamma(x_i))
       \end{align*}
     \end{column}
   \end{columns}
   \pause
   How do we do inference?
+\end{frame}
+
+\begin{frame}{Mean-field variational inference}
+  \centering
+  What happens if the model is simple? \pause Mean-field variational inference
+  \begin{columns}
+    \begin{column}{0.3\textwidth}
+      \includegraphics{tikz/gmm}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+        \begin{itemize}
+            \item Initialize individual distributions: \\ $q(\pi), \{q(z_i)\}_{i = 1}^N,
+            \{q(\mu_k, \Sigma_k)\}_{k = 1}^K$.
+            \item Perform coordinate ascent on the ELBO over each $q$.
+        \end{itemize}
+    \end{column}
+  \end{columns}
 \end{frame}
 
 \begin{frame}{Variational message passing}
@@ -530,6 +559,67 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
     \multiinclude[graphics={width=0.5\textwidth},start=1]{img/vmp}
   \end{center}
 
+\end{frame}
+
+\begin{frame}{Exponential family}
+  A probability distribution is in the \emph{exponential family}
+  if it can be parametrized in the following way.
+
+  \pause
+
+  \begin{align*}
+    \log p(y | x) = \left\langle\eta(x), t_y(y)\right\rangle - \log Z(\eta(x))
+  \end{align*}
+  where
+  \begin{itemize}
+      \pause
+    \item $\eta(x)$ - natural parameter function
+      \pause
+    \item $t_y(y)$ - sufficient statistic function
+      \pause
+    \item $\log Z(\eta(x))$ - log-partition function
+  \end{itemize}
+  \pause
+  \textbf{Examples:} Gaussian, Categorical, Dirichlet, inverse-Wishart
+\end{frame}
+
+\begin{frame}{Conjugacy}
+   \begin{center}
+        \includegraphics{tikz/conjugate-pair}
+   \end{center}
+   A pair of random variables are conjugate if
+   you can rearrange $p(y | x)$ from
+
+  \pause
+
+  \begin{align*}
+    \log p(x) &= \left\langle\eta_x, t_x(x)\right\rangle - \log Z(\eta_x) \\
+    \log p(y | x) &= \left\langle\eta_y(x), t_y(y)\right\rangle - \log Z(\eta_y(x))
+  \end{align*}
+  to
+  \pause
+  \begin{align*}
+    \log p(y | x) \propto \left\langle t_x(x), \eta^*_y(y)\right\rangle
+  \end{align*}
+\end{frame}
+
+\begin{frame}{Posterior distribution}
+   \begin{center}
+        \includegraphics{tikz/conjugate-pair}
+   \end{center}
+  \begin{align*}
+    \log p(y | x) \propto \left\langle t_x(x), \eta^*_y(y)\right\rangle
+  \end{align*}
+  \pause
+  The corresponding posterior distribution is:
+  \begin{align*}
+    \log p(x | y) = \left\langle t_x(x), \eta^*_y(y) + \eta_x\right\rangle + \log Z(\eta^*_y(y) + \eta_x)
+  \end{align*}
+  \pause
+  \centering
+  \fbox{
+      \scalebox{2}{$\eta^*_y(y) + \eta_x$}
+  }
 \end{frame}
 
 \iffalse
@@ -573,7 +663,7 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 \end{frame}
 \fi
 
-\begin{frame}{Inference in SVAE}
+\begin{frame}{Inference in structured embedding models}
   First of all, a neural network is neither conjugate nor exponential.
   How do we use VMP?
 
@@ -609,7 +699,7 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   \end{columns}
   \pause
   \vspace{20pt}
-  \emph{Neural Variational Message Passing} - Vikram, 2018 (under review for UAI)
+  \emph{Neural Variational Message Passing} - Vikram, 2018 (under review for UAI) $\begin{array}{l}\includegraphics{img/overview-digit-2}\end{array}$
 \end{frame}
 
 
