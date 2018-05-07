@@ -6,7 +6,7 @@
   bm, 
   tikz, 
   tikzscale, 
-  float,
+  float, subfloat,
   caption, subcaption,
   fancybox,
   xmpmulti,
@@ -715,6 +715,71 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 \begin{frame}{Neural variational message passing}
   Neural variational message passing - Vikram 2018
   $\begin{array}{l}\includegraphics{img/overview-digit-2}\end{array}$
+  
+  \begin{itemize}
+    \pause
+    \item Generalizes VAE and SVAE
+    \pause
+    \item Extends it to new models (non-linear dynamical system, Bayesian logistic regression)
+    
+    \pause
+    
+    \item Optimizes a lower bound on the ELBO
+    \pause
+    \item Enables very simple software package
+    \begin{center}
+        \begin{figure}[H]
+            \includegraphics[width=0.8\textwidth]{img/nvmp-code}
+        \end{figure}
+    \end{center}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Overview}
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/overview-2}
+\end{frame}
+
+\section{Applications}
+
+\begin{frame}{Model-based reinforcement learning}
+    Joint work with Marvin Zhang and Sergey Levine of UC Berkeley
+    \pause
+    
+	Consider an agent in a system,
+	and a set of its possible actions.
+	\begin{center}
+		\includegraphics[width=0.5\textwidth]{img/agent-env-1.png}
+	\end{center}
+	\pause
+	Model learning is the problem of estimating the dynamics of the system
+	when we don't know it beforehand.
+\end{frame}
+
+\begin{frame}{Model learning}
+	Formally, consider an agent in a system with state space $\mathcal{S}$
+	with action space $\mathcal{A}$ with underlying dynamics 
+	function $p(s_{t + 1} | s_t, a_t)$.
+
+	We are interested in learning an approximate dynamics function
+	\begin{align*}\hat{p}(s_{t + 1} | s_t, a_t)\end{align*}
+		from a dataset of trajectories \begin{align*}\bm{\tau} = \{(s^{(i)}_0, a^{(i)}_0, s^{(i)}_1, a^{(i)}_1, \ldots, s^{(i)}_T)\}_{i = 1}^N\end{align*}
+\end{frame}
+
+\begin{frame}{Bayesian linear dynamical system}
+	\pause
+	\centering
+	\includegraphics{tikz/blds}
+	\begin{alignat*}{3}
+		\mu_{\isdmodel},\Sigma_{\isdmodel}&\sim\mathcal{NIW}(\Psi,\nu,\mu_0,\kappa)\,,~~~\dynmat,\dyncovar&&\sim\mathcal{MNIW}(\Psi,\nu,\bm{M}_0,\bm{V})\,,\\
+		\state_0~|~\mu_{\isdmodel},\Sigma_{\isdmodel}&\sim\N(\mu_{\isdmodel}, \Sigma_{\isdmodel})\,,~~~~~\state_{t+1}~|~\state_t,\action_t&&\sim\N\left(\dynmat\begin{bmatrix}\state_t\\\action_t\end{bmatrix},\dyncovar\right) \textrm{ for } t \in [0,\ldots,\horizon]
+	\end{alignat*}
+	\pause
+	We are interested in the posterior distribution 
+	$
+	p(\mu_\isdmodel, \Sigma_\isdmodel, \dynmat, \dyncovar | {s_0, a_0, \ldots, s_T})
+	$
+	which can be computed analytically.
 \end{frame}
 
 \begin{frame}[allowframebreaks]{References}
