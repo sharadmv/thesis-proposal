@@ -1,0 +1,20 @@
+\begin{tikzpicture}
+\tikzstyle{main}=[circle, minimum size = 10mm, thick, draw =black!80, node distance = 16mm]
+\tikzstyle{connect}=[-latex, thick]
+\tikzstyle{box}=[rectangle, draw=black!100]
+    
+    \node[obs](yt){$y_t$};
+    \node[obs, right=of yt](yt1){$y_{t + 1}$};
+    \node[latent, above=of yt](xt){$x_t$};
+    \node[latent, right=of xt](xt1){$x_{t + 1}$};
+    \node[latent, above=of xt](a){$A$};
+    
+    \edge{a}{xt1};
+    \edge{xt}{xt1};
+    \edge{xt}{yt};
+    \edge{xt1}{yt1};
+    
+    \plate{plate1}{
+        (xt) (xt1) (yt) (yt1)
+    } {$N$};
+\end{tikzpicture}
