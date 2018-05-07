@@ -477,10 +477,30 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 
 \section{Structured embedding learning}
 
-\begin{frame}[standout]
-  \centering
-  Can we generalize using neural networks as a tool
-  for approximate inference?
+\begin{frame}{Structured embedding models}
+  \begin{figure}
+    \centering
+    \pause
+    \begin{subfigure}[t]{0.27\textwidth}
+        \centering
+        \includegraphics{tikz/lgmm}
+        \caption*{Latent GMM}
+    \end{subfigure}
+    \pause
+    \hfill
+    \begin{subfigure}[t]{0.27\textwidth}
+        \centering
+        \includegraphics{tikz/ltmc}
+        \caption*{Latent hierarchical clustering}
+    \end{subfigure}
+    \pause
+    \hfill
+    \begin{subfigure}[t]{0.27\textwidth}
+        \centering
+        \includegraphics{tikz/llds}
+        \caption*{Latent LDS}
+    \end{subfigure}
+  \end{figure}
 \end{frame}
 
 \begin{frame}{Structured variational autoencoder}
@@ -534,9 +554,18 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   How do we do inference?
 \end{frame}
 
+\begin{frame}[standout]
+  \centering
+  Can we generalize using neural networks as a tool
+  for approximate inference?
+\end{frame}
+
 \begin{frame}{Mean-field variational inference}
   \centering
-  What happens if the model is simple? \pause Mean-field variational inference
+  What happens if the model is simple (conjugate-exponential)? 
+  
+  \pause Mean-field variational inference
+  
   \begin{columns}
     \begin{column}{0.3\textwidth}
       \includegraphics{tikz/gmm}
@@ -552,8 +581,13 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 \end{frame}
 
 \begin{frame}{Variational message passing}
-  In variational inference for conjugate-exponential models,
-  there is a simple graph algorithm, called \emph{variational message passing} (VMP).
+  Mean-field variational inference has a corresponding
+  graph-based algorithm, called \emph{variational message passing} (VMP).
+  
+  \pause
+  
+  Each individual coordinate ascent corresponds to
+  computing ``messages'' from a node's neighbors.
 
   \begin{center}
     \multiinclude[graphics={width=0.5\textwidth},start=1]{img/vmp}
@@ -561,6 +595,7 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 
 \end{frame}
 
+\iffalse
 \begin{frame}{Exponential family}
   A probability distribution is in the \emph{exponential family}
   if it can be parametrized in the following way.
@@ -622,6 +657,7 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   }
 \end{frame}
 
+\fi
 \iffalse
 \begin{frame}{Messages}
   Remember that $\eta_j$ is the natural parameter of the distribution $q(\mathbf{H}_j)$.
@@ -671,42 +707,14 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   \textbf{Strategy:} Run VMP, but use ``fake'' messages for the neural network observation model.
 
   \begin{center}
-    \multiinclude[graphics={width=0.15\textwidth}, start=1]{img/vmp-svae}
+    \multiinclude[<+>][graphics={width=0.10\textwidth}, start=1]{img/nvmp}
   \end{center}
 
 \end{frame}
 
-
-\begin{frame}{SVAE limitations}
-  \centering
-  SVAE is limited to non-conjugate observation models. 
-  
-  \pause
-  How about a model like this?
-  \pause
-  \vspace{40pt}
-
-  \begin{columns}
-    \begin{column}{0.3\textwidth}
-      \includegraphics{tikz/nlds}
-    \end{column}
-    \begin{column}{0.3\textwidth}
-      \begin{align*}
-          x_{t + 1} | x_t &\sim \N(\mu_\gamma(x_t), \Sigma_\gamma(x_t)) \\
-          y_t | x_t &\sim \N(x_t, \sigma^2_yI)
-      \end{align*}
-    \end{column}
-  \end{columns}
-  \pause
-  \vspace{20pt}
-  \emph{Neural Variational Message Passing} - Vikram, 2018 (under review for UAI) $\begin{array}{l}\includegraphics{img/overview-digit-2}\end{array}$
-\end{frame}
-
-
-\begin{frame}{Importance of NVMP}
-  \begin{center}
-    NVMP enables structured embedding learning
-  \end{center}
+\begin{frame}{Neural variational message passing}
+  Neural variational message passing - Vikram 2018
+  $\begin{array}{l}\includegraphics{img/overview-digit-2}\end{array}$
 \end{frame}
 
 \begin{frame}[allowframebreaks]{References}
