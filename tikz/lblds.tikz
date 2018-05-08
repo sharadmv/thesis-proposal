@@ -1,0 +1,30 @@
+\begin{tikzpicture}
+\tikzstyle{main}=[circle, minimum size = 10mm, thick, draw =black!80, node distance = 16mm]
+\tikzstyle{connect}=[-latex, thick]
+\tikzstyle{box}=[rectangle, draw=black!100]
+    
+    \node[obs](s0){$s_0$};
+    \node[obs, right=0.2cm of s0](a0){$a_0$};
+    \node[obs, right=0.2cm of a0](s1){$s_1$};
+    \node[obs, right=0.2cm of s1](aT1){$a_{T - 1}$};
+    \node[obs, right=0.2cm of aT1](sT){$s_T$};
+
+    \node[latent, above=of s0](x0){$x_0$};
+    \node[latent, above=of s1](x1){$x_1$};
+    \node[latent, above=of sT](xT){$x_T$};
+
+    \edge{x0}{x1};
+    \edge[-, dotted]{x1}{xT};
+
+    \edge{x0}{s0};
+    \edge{x1}{s1};
+    \edge{xT}{sT};
+
+    \edge{a0}{x1};
+    \edge{aT1}{xT};
+
+    \node[latent, above=of x1](A){$A, \Sigma$};
+
+    \edge{A}{x1};
+    \edge{A}{xT};
+\end{tikzpicture}
