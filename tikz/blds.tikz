@@ -3,29 +3,21 @@
 \tikzstyle{connect}=[-latex, thick]
 \tikzstyle{box}=[rectangle, draw=black!100]
     
-    \node[obs](s0){$s_0$}
-    \node[obs](s1){$s_1$}
-    \node[obs](sT){$s_T$}
-    \edge[dashed]{s1}{sT};
+    \node[obs](s0){$s_0$};
+    \node[obs, right=of s0](s1){$s_1$};
+    \node[obs, right=of s1](sT){$s_T$};
+    \edge{s0}{s1}
+    \edge[-, dotted]{s1}{sT};
 
-    \node[obs, right=of s0](a0){$a_0$}
-    \node[obs](a1, right=of s1){$a_1$}
+    \node[obs, below=of s1](a0){$a_0$};
+    \node[obs, below=of sT](aT1){$a_{T - 1}$};
 
-    \node[latent, above=of s0](x0){$x_0$}
-    \node[latent, above=of s1](x1){$x_1$}
-    \node[latent, above=of sT](xT){$x_T$}
-    \edge[dashed]{x1}{xT};
 
-    \edge{a0}{x0};
-    \edge{a1}{x1};
-    \edge{aT}{xT};
+    \edge{a0}{s1};
+    \edge{aT1}{sT};
 
-    \edge{x0}{s0};
-    \edge{x1}{s1};
-    \edge{xT}{sT};
+    \node[latent, above=of s1](A){$A, \Sigma$};
 
-    \node[latent, above=of x1](A){$A, \Sigma$}
-
-    \edge{A}{x1};
-    \edge{A}{xT};
+    \edge{A}{s1};
+    \edge{A}{sT};
 \end{tikzpicture}

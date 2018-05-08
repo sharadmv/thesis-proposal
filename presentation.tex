@@ -10,7 +10,8 @@
   caption, subcaption,
   fancybox,
   xmpmulti,
-  empheq
+  empheq,
+  multimedia
 }
 \usetikzlibrary{fit, positioning, bayesnet}
 \usepackage[mode=buildnew]{standalone}
@@ -767,19 +768,57 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 \end{frame}
 
 \begin{frame}{Bayesian linear dynamical system}
-	\pause
-	\centering
-	\includegraphics{tikz/blds}
-	\begin{alignat*}{3}
-		\mu_{\isdmodel},\Sigma_{\isdmodel}&\sim\mathcal{NIW}(\Psi,\nu,\mu_0,\kappa)\,,~~~\dynmat,\dyncovar&&\sim\mathcal{MNIW}(\Psi,\nu,\bm{M}_0,\bm{V})\,,\\
-		\state_0~|~\mu_{\isdmodel},\Sigma_{\isdmodel}&\sim\N(\mu_{\isdmodel}, \Sigma_{\isdmodel})\,,~~~~~\state_{t+1}~|~\state_t,\action_t&&\sim\N\left(\dynmat\begin{bmatrix}\state_t\\\action_t\end{bmatrix},\dyncovar\right) \textrm{ for } t \in [0,\ldots,\horizon]
-	\end{alignat*}
-	\pause
+  \begin{columns}
+    \begin{column}{0.3\textwidth}
+        \includegraphics{tikz/blds}
+    \end{column}
+    \begin{column}{0.3\textwidth}
+      \begin{align*}
+        A, \Sigma &\sim \MNIW(\Psi, \nu, M_0, V) \\
+        s_{t + 1} | s_t, a_t, A, \Sigma &\sim \N(A\begin{bmatrix}s_t\\a_t\end{bmatrix}, \Sigma)
+      \end{align*}
+    \end{column}
+  \end{columns}
 	We are interested in the posterior distribution 
 	$
-	p(\mu_\isdmodel, \Sigma_\isdmodel, \dynmat, \dyncovar | {s_0, a_0, \ldots, s_T})
+	p(A, \Sigma | {s_0, a_0, \ldots, s_T})
 	$
 	which can be computed analytically.
+\end{frame}
+
+\begin{frame}{Latent linear dynamical system}
+  \begin{columns}
+    \begin{column}{0.3\textwidth}
+        \includegraphics{tikz/lblds}
+    \end{column}
+    \begin{column}{0.6\textwidth}
+      \begin{align*}
+        A, \Sigma &\sim \MNIW(\Psi, \nu, M_0, V) \\
+        x_{t + 1} | x_t, a_t, A, \Sigma &\sim \N(A\begin{bmatrix}x_t\\a_t\end{bmatrix}, \Sigma)
+      \end{align*}
+    \end{column}
+  \end{columns}
+	The posterior distribution 
+	$
+	q(A, \Sigma, x_0, \ldots, x_T | {s_0, a_0, \ldots, s_T})
+	$
+	is no longer tractable, but can be approximated via NVMP.
+\end{frame}
+
+\begin{frame}{Reinforcement learning}
+    After learning this latent space,
+    we can use model-predictive control (MPC)
+    to optimize a cost function.
+    
+    \pause
+    
+    \begin{center}
+        Learning to Model: Deep Structured Representations for Dynamics Inference in Reinforcement Learning - Zhang, Vikram, & Levine (submitting to NIPS 2018)
+        $\begin{array}{l}\includegraphics{img/overview-digit-3}\end{array}$
+    \end{center}
+    \begin{itemize}
+    \end{itemize}
+    
 \end{frame}
 
 \begin{frame}[allowframebreaks]{References}
