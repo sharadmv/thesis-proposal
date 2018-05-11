@@ -11,7 +11,7 @@
   fancybox,
   xmpmulti,
   empheq,
-  multimedia
+  framed,
 }
 \usetikzlibrary{fit, positioning, bayesnet}
 \usepackage[mode=buildnew]{standalone}
@@ -126,8 +126,9 @@
 
 \begin{frame}{Challenge: ambiguity}
   \centering
-  \onslide<1-5>{Consider the clustering scenario.}
-  \onslide<6>{A Bayesian approach models this ambiguity}
+  \only<1-5>{Consider the clustering scenario.}
+  
+  \only<6>{A Bayesian approach models this ambiguity}
   
   \multiinclude[<+->][format=png, start=0, end=4]{img/ambiguous-bayes}
 
@@ -176,7 +177,6 @@
 
 \begin{frame}{Work in Bayesian interactive structure learning}
   \begin{itemize}
-    \pause
     \item Constrained clustering - \cite{Wagstaff2000ClusteringConstraints, NelsonRevisitingConstraints, ShentalComputingConstraints, LangeLearningData} \\
     \pause
     \begin{center}
@@ -205,15 +205,18 @@
   We desire a probability distribution over all possible
   trees that explain the data.
 
+    \pause
   \begin{center}
-    \includegraphics<2>[width=0.7\textwidth]{img/3-cluster-distribution.png}
-    \includegraphics<3>[width=0.7\textwidth]{img/3-cluster-linear-distribution.png}
+    %\includegraphics<2>[width=0.7\textwidth]{img/3-cluster-distribution.png}
+    \includegraphics[width=0.7\textwidth]{img/3-cluster-linear-distribution.png}
   \end{center}
 \end{frame}
 
-\begin{frame}{Bayesian hierarchical clustering}
+\begin{frame}{Bayesian hierarchical clustering: generative process}
   Define a generative model for the data.
+  \begin{center}
   $\begin{array}{l}\includegraphics{tikz/tmc}\end{array}$ 
+  \end{center}
   
   \begin{itemize}
     \pause
@@ -222,29 +225,23 @@
     \pause
     \item Likelihood model $p(\bm{x} | \tau)$, (Brownian motion,
       Dirichlet-multinomial diffusion)
-  %\begin{center}
-    %\includegraphics<2>[width=\textwidth]{img/diffusion-1}
-    %\includegraphics<3>[width=\textwidth]{img/diffusion-2}
-    %\includegraphics<4>[width=\textwidth]{img/diffusion-3}
-    %\includegraphics<5>[width=\textwidth]{img/diffusion-4}
-  %\end{center}
   \end{itemize}
 
   \begin{center}
-    \includegraphics<2-3>[width=0.8\textwidth]{img/tree-data-0}
-    \includegraphics<4>[width=0.8\textwidth]{img/tree-data-1}
+    \includegraphics<2-3>[width=0.6\textwidth]{img/tree-data-0}
+    \includegraphics<4>[width=0.6\textwidth]{img/tree-data-1}
   \end{center}
 
 \end{frame}
 
-\begin{frame}{Inference}
+\begin{frame}{Inference in BHC}
   We are interested in the posterior distribution
   $p(\tau | \bm{x})$, which we compute
-  via approximate methods like Metropolis-Hastings.
+  via MCMC methods like Metropolis-Hastings.
   
   \pause
 
-  A popular proposal distribution is \alert{subtree-prune
+  A popular local search step is \alert{subtree-prune
   and regraft} (SPR).
 
   \begin{center}
@@ -272,56 +269,12 @@
   \end{center}
 \end{frame}
 
-\iffalse
-\begin{frame}{Intelligent subset queries}
-
-  Recall the interaction model.
-
-  \begin{center}
-    \includegraphics[width=\textwidth]{img/interaction-3}
-  \end{center}
-
-  \pause
-
-  %We pick a subset of data $S$ and show a user the candidate tree
-  %restricted to $S$, $T|_S$.
-
-  %\pause
-
-  \textbf{Idea:}  pick subsets that have high variance
-  under the posterior distribution
-
-\end{frame}
-
-\begin{frame}{Measuring subtree variance}
-
-    First, sample $N$ trees from posterior distribution.
-
-  \pause
-
- \metroset{block=fill}
-  \begin{block}{Definition: tree distance variance (TDV)}
-    Given a subset of data $S$ and tree samples $\mathcal{T} = T_1, \ldots, T_N$,
-    \begin{align}
-      \mathrm{TDV}(S, \mathcal{T}) = \max_{i, j \in S}  \mathrm{Var}_{T \in \mathcal{T}}\left[\texttt{tree-dist}_{T|S}(i, j)\right]
-    \end{align}
-  where $\texttt{tree-dist}_T$ is the number of edges needed to get from leaf $i$ to leaf $j$
-  in tree $T$.
-  \end{block}
-
-  \pause
-
-Instantiate $L$ subsets randomly and pick the one with the highest variance.
-
-\end{frame}
-\fi
-
 \begin{frame}{Results}
   \centering
   \vspace{10pt}
   \begin{figure}
-  \frame{\includegraphics[width=0.8\textwidth]{img/trees/MNIST-result}}
-  \caption*{Results of hierarchical clustering on MNIST}
+  \frame{\includegraphics[width=0.7\textwidth]{img/trees/MNIST-result}}
+  \caption*{Results of interactive Bayesian hierarchical clustering on MNIST}
   \end{figure}
 \end{frame}
 
@@ -330,7 +283,7 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   \includegraphics[width=0.8\textwidth]{img/overview-1}
 \end{frame}
 
-\section{Embedding learning}
+\section{Embedding learning (background)}
 
 \iffalse
 \begin{frame}{Bayesian embedding learning}
@@ -369,14 +322,14 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 \end{frame}
 
 \begin{frame}{Variational inference at a high level}
-  For models where we can't compute
-  the posterior analytically, \textbf{variational inference}
+  For models where sampling is too slow,
+  \textbf{variational inference}
   is a viable approach.
 
   \pause
     Consider a latent variable model with latent variable 
     $x$ and observation $y$. Our desired
-    posterior is $p(x | y)$
+    posterior is $p(x | y)$.
 
     \pause
     \textbf{Strategy}: convert inference into optimization
@@ -390,54 +343,27 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
       \item Maximize objective $\phi^* = \argmax_\phi \elbo[q_\phi(x)]$
     \end{itemize}
     \pause
-    If $q(x)$ is sufficiently expressive,
+    If $q_\phi(x)$ is sufficiently expressive,
     it can approximate $p(x | y)$ quite well.
 \end{frame}
-
-\iffalse
-\begin{frame}{KL-divergence}
-  Kullback-Leibler (KL) divergence
-  is a measure of how far one probability distribution
-  is from another.
-
-  \pause
-  For distributions $q(x)$ and $p(x)$,
-  \begin{align*}
-    \textrm{KL}(q(x)\|p(x)) = \int q(x)\log \frac{q(x)}{p(x)}dx = \E_{q(x)}\left[\log\frac{q(x)}{p(x)}\right]
-  \end{align*}
-
-  \pause
-  \textbf{Properties:}
-  \begin{itemize}
-    \item $\textrm{KL}(q(x)\|p(x)) = 0$ if $q(x) = p(x)$.
-    \item Asymmetric
-  \end{itemize}
-\end{frame}
-
-\fi
 
 \begin{frame}{Evidence lower bound}
   This objective is called the \alert{evidence lower bound} (ELBO).
   
   \pause
   
-  It has a unique relationship to the KL divergence $ \KL(q(\theta, x)\|p(\theta, x|y))$.
-
-  \pause
-  We can rewrite the KL divergence as
-  \begin{align*}
-    \KL(q(x)\|p(x|y)) &= \int q(x)\log\frac{q(x)}{p(x | y)}dx \\
-    %&= \int q(\theta, x) \left(\log q(\theta, x) - \log p(\theta, x | y)\right)d\theta, x \\
-    %&= \int q(\theta, x) \left(\log q(\theta, x) - \log \frac{p(\theta, x, y)}{p(y)}\right)d\theta, x \\
-    %&= \int q(\theta, x) \left(\log q(\theta, x) - \log p(\theta, x, y) + \log p(y)\right)d\theta, x \\
-              &= \log p(y) - \E_{q(x)}\left[\log\frac{p(y, x)}{q(x)}\right]
-  \end{align*}
-
-  \pause
-  
   \begin{align*}
     \elbo[q(x)] &\triangleq \E_{q(x)}\left[\log\frac{p(y, x)}{q(x)}\right]
   \end{align*}
+
+  It has a unique relationship to the KL divergence $\KL(q(x)\|p(x|y))$.
+
+  We can rewrite the KL divergence as
+  \begin{align*}
+    \KL(q(x)\|p(x|y)) &= \int q(x)\log\frac{q(x)}{p(x | y)}dx \\
+              &= \log p(y) - \E_{q(x)}\left[\log\frac{p(y, x)}{q(x)}\right]
+  \end{align*}
+  
 \end{frame}
 
 \begin{frame}{Variational autoencoder}
@@ -446,7 +372,10 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   \pause
 
   \begin{center}
-      \ovalbox{Pick $q_\phi(x | y)$ (can be conditional) to be a \emph{neural network} parameterized by $\phi$}
+      \begin{framed}
+       Pick $q_\phi(x | y)$ (can be conditional) to be a \emph{neural network}
+          parameterized by $\phi$
+      \end{framed}
   \end{center}
 
   \pause
@@ -465,7 +394,7 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   \end{align*}
 \end{frame}
 
-\begin{frame}{Monte-Carlo ELBO}
+\begin{frame}{Sidebar: Monte-Carlo ELBO}
   We can't compute the ELBO because of the expectation w.r.t $q_\phi(x|y)$.
   \begin{align*}
     \elbo[q_\phi(x | y)] &= \E_{q_\phi(x | y)}\left[\log \frac{p(y, x)}{q_\phi(x | y)}\right]
@@ -560,6 +489,32 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   How do we do inference?
 \end{frame}
 
+\begin{frame}{What makes inference in these models hard?}
+  \begin{figure}
+    \centering
+    \begin{subfigure}[t]{0.23\textwidth}
+        \centering
+        \includegraphics{tikz/lgmm}
+        \caption*{Latent GMM}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.23\textwidth}
+        \centering
+        \includegraphics{tikz/ltmc}
+        \caption*{Latent hierarchical clustering}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.23\textwidth}
+        \centering
+        \includegraphics{tikz/llds}
+        \caption*{Latent LDS}
+    \end{subfigure}
+  \end{figure}
+  \pause
+  \centering
+  All of these models have a \alert{nonconjugate} edge!
+\end{frame}
+
 \begin{frame}[standout]
   \centering
   Can we generalize using neural networks as a tool
@@ -601,110 +556,6 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 
 \end{frame}
 
-\iffalse
-\begin{frame}{Exponential family}
-  A probability distribution is in the \emph{exponential family}
-  if it can be parametrized in the following way.
-
-  \pause
-
-  \begin{align*}
-    \log p(y | x) = \left\langle\eta(x), t_y(y)\right\rangle - \log Z(\eta(x))
-  \end{align*}
-  where
-  \begin{itemize}
-      \pause
-    \item $\eta(x)$ - natural parameter function
-      \pause
-    \item $t_y(y)$ - sufficient statistic function
-      \pause
-    \item $\log Z(\eta(x))$ - log-partition function
-  \end{itemize}
-  \pause
-  \textbf{Examples:} Gaussian, Categorical, Dirichlet, inverse-Wishart
-\end{frame}
-
-\begin{frame}{Conjugacy}
-   \begin{center}
-        \includegraphics{tikz/conjugate-pair}
-   \end{center}
-   A pair of random variables are conjugate if
-   you can rearrange $p(y | x)$ from
-
-  \pause
-
-  \begin{align*}
-    \log p(x) &= \left\langle\eta_x, t_x(x)\right\rangle - \log Z(\eta_x) \\
-    \log p(y | x) &= \left\langle\eta_y(x), t_y(y)\right\rangle - \log Z(\eta_y(x))
-  \end{align*}
-  to
-  \pause
-  \begin{align*}
-    \log p(y | x) \propto \left\langle t_x(x), \eta^*_y(y)\right\rangle
-  \end{align*}
-\end{frame}
-
-\begin{frame}{Posterior distribution}
-   \begin{center}
-        \includegraphics{tikz/conjugate-pair}
-   \end{center}
-  \begin{align*}
-    \log p(y | x) \propto \left\langle t_x(x), \eta^*_y(y)\right\rangle
-  \end{align*}
-  \pause
-  The corresponding posterior distribution is:
-  \begin{align*}
-    \log p(x | y) = \left\langle t_x(x), \eta^*_y(y) + \eta_x\right\rangle + \log Z(\eta^*_y(y) + \eta_x)
-  \end{align*}
-  \pause
-  \centering
-  \fbox{
-      \scalebox{2}{$\eta^*_y(y) + \eta_x$}
-  }
-\end{frame}
-
-\fi
-\iffalse
-\begin{frame}{Messages}
-  Remember that $\eta_j$ is the natural parameter of the distribution $q(\mathbf{H}_j)$.
-  \pause
-  The message from a parent $Y$ to a child $X$ is
-  \begin{align*}
-    m_{Y \rightarrow X} = f(\eta_Y)
-  \end{align*}
-  \pause
-  The message from a child $X$ to a parent $Y$ is
-  \begin{align*}
-    m_{X \rightarrow Y} = g(\eta_X, \{m_{i \rightarrow X}\}_{i \in \textrm{cp}_Y})
-  \end{align*}
-
-  \pause
-  In conjugate-exponential PGMs, messages can be computed in closed-form.
-\end{frame}
-
-\begin{frame}{Summary of VMP}
-  \textbf{Setup:} Conjugate-exponential graphical model
-
-  \pause
-  \textbf{Problem:} Compute posterior $p(\mathbf{H} | \mathbf{V})$, approximated with $q(\mathbf{H}) = \prod_j q(\mathbf{H}_j)$
-
-  \pause
-  \textbf{Solution:} Until converged, for each hidden node $\mathbf{H}_j$:
-  \begin{enumerate}
-    \pause
-  \item Collect messages from children and parents
-    \pause
-  \item Compute updated distribution parameters from messages
-\end{enumerate}
-
-\pause
-\textbf{Benefits:} efficient, simple, can incorporate mini-batches (stochastic variational inference)
-
-\pause
-\textbf{Drawbacks:} can be underexpressive (conjugate-exponential requirement)
-\end{frame}
-\fi
-
 \begin{frame}{Inference in structured embedding models}
   First of all, a neural network is neither conjugate nor exponential.
   How do we use VMP?
@@ -719,7 +570,7 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 \end{frame}
 
 \begin{frame}{Neural variational message passing}
-  Neural variational message passing - Vikram 2018
+  Neural variational message passing - Vikram 2018 (under review for UAI 2018)
   $\begin{array}{l}\includegraphics{img/overview-digit-2}\end{array}$
   
   \begin{itemize}
@@ -760,6 +611,9 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   \pause
   
   \textbf{Replace with:} $r_\phi(y_i, x_i)$
+  
+  \pause
+  NVMP achieves parity with gradient descent!
 \end{frame}
 
 \begin{frame}{Overview}
@@ -964,5 +818,167 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
     %\end{enumerate}
   %\end{block}
 %\end{frame}
+\appendix
+\begin{frame}{Intelligent subset queries}
+
+  Recall the interaction model.
+
+  \begin{center}
+    \includegraphics[width=\textwidth]{img/interaction-3}
+  \end{center}
+
+  \pause
+
+  %We pick a subset of data $S$ and show a user the candidate tree
+  %restricted to $S$, $T|_S$.
+
+  %\pause
+
+  \textbf{Idea:}  pick subsets that have high variance
+  under the posterior distribution
+
+\end{frame}
+
+\begin{frame}{Measuring subtree variance}
+
+    First, sample $N$ trees from posterior distribution.
+
+  \pause
+
+ \metroset{block=fill}
+  \begin{block}{Definition: tree distance variance (TDV)}
+    Given a subset of data $S$ and tree samples $\mathcal{T} = T_1, \ldots, T_N$,
+    \begin{align}
+      \mathrm{TDV}(S, \mathcal{T}) = \max_{i, j \in S}  \mathrm{Var}_{T \in \mathcal{T}}\left[\texttt{tree-dist}_{T|S}(i, j)\right]
+    \end{align}
+  where $\texttt{tree-dist}_T$ is the number of edges needed to get from leaf $i$ to leaf $j$
+  in tree $T$.
+  \end{block}
+
+  \pause
+
+Instantiate $L$ subsets randomly and pick the one with the highest variance.
+
+\end{frame}
+
+\begin{frame}{KL-divergence}
+  Kullback-Leibler (KL) divergence
+  is a measure of how far one probability distribution
+  is from another.
+
+  \pause
+  For distributions $q(x)$ and $p(x)$,
+  \begin{align*}
+    \textrm{KL}(q(x)\|p(x)) = \int q(x)\log \frac{q(x)}{p(x)}dx = \E_{q(x)}\left[\log\frac{q(x)}{p(x)}\right]
+  \end{align*}
+
+  \pause
+  \textbf{Properties:}
+  \begin{itemize}
+    \item $\textrm{KL}(q(x)\|p(x)) = 0$ if $q(x) = p(x)$.
+    \item Asymmetric
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Exponential family}
+  A probability distribution is in the \emph{exponential family}
+  if it can be parametrized in the following way.
+
+  \pause
+
+  \begin{align*}
+    \log p(y | x) = \left\langle\eta(x), t_y(y)\right\rangle - \log Z(\eta(x))
+  \end{align*}
+  where
+  \begin{itemize}
+      \pause
+    \item $\eta(x)$ - natural parameter function
+      \pause
+    \item $t_y(y)$ - sufficient statistic function
+      \pause
+    \item $\log Z(\eta(x))$ - log-partition function
+  \end{itemize}
+  \pause
+  \textbf{Examples:} Gaussian, Categorical, Dirichlet, inverse-Wishart
+\end{frame}
+
+\begin{frame}{Conjugacy}
+   \begin{center}
+        \includegraphics{tikz/conjugate-pair}
+   \end{center}
+   A pair of random variables are conjugate if
+   you can rearrange $p(y | x)$ from
+
+  \pause
+
+  \begin{align*}
+    \log p(x) &= \left\langle\eta_x, t_x(x)\right\rangle - \log Z(\eta_x) \\
+    \log p(y | x) &= \left\langle\eta_y(x), t_y(y)\right\rangle - \log Z(\eta_y(x))
+  \end{align*}
+  to
+  \pause
+  \begin{align*}
+    \log p(y | x) \propto \left\langle t_x(x), \eta^*_y(y)\right\rangle
+  \end{align*}
+\end{frame}
+
+\begin{frame}{Posterior distribution}
+   \begin{center}
+        \includegraphics{tikz/conjugate-pair}
+   \end{center}
+  \begin{align*}
+    \log p(y | x) \propto \left\langle t_x(x), \eta^*_y(y)\right\rangle
+  \end{align*}
+  \pause
+  The corresponding posterior distribution is:
+  \begin{align*}
+    \log p(x | y) = \left\langle t_x(x), \eta^*_y(y) + \eta_x\right\rangle + \log Z(\eta^*_y(y) + \eta_x)
+  \end{align*}
+  \pause
+  \centering
+  \fbox{
+      \scalebox{2}{$\eta^*_y(y) + \eta_x$}
+  }
+\end{frame}
+
+\begin{frame}{Messages}
+  Remember that $\eta_j$ is the natural parameter of the distribution $q(\mathbf{H}_j)$.
+  \pause
+  The message from a parent $Y$ to a child $X$ is
+  \begin{align*}
+    m_{Y \rightarrow X} = f(\eta_Y)
+  \end{align*}
+  \pause
+  The message from a child $X$ to a parent $Y$ is
+  \begin{align*}
+    m_{X \rightarrow Y} = g(\eta_X, \{m_{i \rightarrow X}\}_{i \in \textrm{cp}_Y})
+  \end{align*}
+
+  \pause
+  In conjugate-exponential PGMs, messages can be computed in closed-form.
+\end{frame}
+
+\begin{frame}{Summary of VMP}
+  \textbf{Setup:} Conjugate-exponential graphical model
+
+  \pause
+  \textbf{Problem:} Compute posterior $p(\mathbf{H} | \mathbf{V})$, approximated with $q(\mathbf{H}) = \prod_j q(\mathbf{H}_j)$
+
+  \pause
+  \textbf{Solution:} Until converged, for each hidden node $\mathbf{H}_j$:
+  \begin{enumerate}
+    \pause
+  \item Collect messages from children and parents
+    \pause
+  \item Compute updated distribution parameters from messages
+\end{enumerate}
+
+\pause
+\textbf{Benefits:} efficient, simple, can incorporate mini-batches (stochastic variational inference)
+
+\pause
+\textbf{Drawbacks:} can be underexpressive (conjugate-exponential requirement)
+\end{frame}
+
 
 \end{document}
