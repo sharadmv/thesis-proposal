@@ -806,20 +806,111 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 \end{frame}
 
 \begin{frame}{Reinforcement learning}
-    After learning this latent space,
-    we can use model-predictive control (MPC)
-    to optimize a cost function.
-    
-    \pause
     
     \begin{center}
-        Learning to Model: Deep Structured Representations for Dynamics Inference in Reinforcement Learning - Zhang, Vikram, & Levine (submitting to NIPS 2018)
+        Learning to Model: Deep Structured Representations for Dynamics Inference in Reinforcement Learning - Zhang, Vikram, \& Levine (submitting to NIPS 2018)
         $\begin{array}{l}\includegraphics{img/overview-digit-3}\end{array}$
     \end{center}
+    
+    \pause
+    High level approach:
     \begin{itemize}
+    \pause
+        \item Learns a mapping from non-linear dynamical system to an LDS
+    \pause
+        \item Model-predictive control in the latent space to minimize a cost function
+    \end{itemize}
+    
+    \pause
+    Why is this approach good?
+    \begin{itemize}
+        \pause
+        \item Sample efficiency
+        \pause
+        \item Works on image-based domains and
+        complex robotics tasks
     \end{itemize}
     
 \end{frame}
+
+\begin{frame}{Overview}
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/overview-3}
+\end{frame}
+
+\begin{frame}{Hierarchical clustering in latent spaces}
+
+    \begin{center}
+        \includegraphics{tikz/ltmc}
+    \end{center}
+    \pause
+    
+    Existing work:
+    \begin{itemize}
+        \item Nested Chinese restaurant process - \cite{Goyal2017NonparametricLearning}
+    \pause
+        \item Dirichlet diffusion tree - ?
+        \item Kingman Coalescent - ?
+        \item Time marginalized coalescent - ?
+    \end{itemize}
+    \pause
+    
+    Why? Inference in these models is harder!  $\begin{array}{l}\includegraphics{img/overview-digit-4}\end{array}$
+    
+\end{frame}
+
+\begin{frame}{Challenges}
+    
+    Most challenges in using these models come from scalability:
+    
+    \begin{itemize}
+        \item Representing a full binary tree over a million data points isn't practical
+        \item Searching the space of trees if your dataset is large is impractical
+        \item How do you train a tree with minibatches? Variational inference?
+        \item How do you incorporate interaction?
+    \end{itemize}
+    
+    My solutions:
+    \begin{itemize}
+        \item $q(\tau)$ - pruned tree
+        \item Variational particle approximation - \cite{Saeedi2014VariationalApproximations}
+        \item Neural variational message passing
+        \item Interaction fits in naturally with a particle approximation
+    \end{itemize}
+\end{frame}
+
+\begin{frame}{Overview}
+  \centering
+  \includegraphics[width=0.8\textwidth]{img/overview-4}
+\end{frame}
+
+\begin{frame}{Future work}
+    Interactive learning
+    \begin{itemize}
+    \pause
+        \item Noisy constraints
+    \pause
+        \item Interactive reinforcement learning
+    \pause
+        \item Can interaction improve reinforcement learning?
+    \end{itemize}
+    
+    Structure embeddings
+    \begin{itemize}
+    \pause
+        \item Language modeling - latent Markov model
+    \pause
+        \item More complex dynamical systems - switching states
+    \pause
+        \item Automating amortized inference
+    \end{itemize}
+    \pause
+\end{frame}
+
+\begin{frame}[standout]
+    Thank you! Any questions?
+\end{frame}
+
 
 \begin{frame}[allowframebreaks]{References}
     \bibliographystyle{unsrtnat}
