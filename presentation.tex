@@ -25,7 +25,7 @@
 
 \title{Bayesian learning of structured embeddings}
 \subtitle{Thesis proposal}
-\date{\today}
+\date{May 11, 2018}
 \author{Sharad Vikram}
 \institute{UCSD}
 
@@ -77,6 +77,7 @@
     \end{column}
     \begin{column}{0.5\textwidth}
       \begin{overlayarea}{\textwidth}{5cm}
+        \pause
         \centering
         \Large \textbf{Embedding} \\ \vspace{60pt}
         \includegraphics[]{img/bayesian-intro-right-1}
@@ -119,17 +120,16 @@
     \end{subfigure}
   \end{figure}
   \pause
-  Structure learning seeks out intuitive behavior in data
+  Structure learning seeks out patterns in data that has intuitive meaning to us
 
 \end{frame}
 
 \begin{frame}{Challenge: ambiguity}
   \centering
-  Consider the clustering scenario.
-
+  \onslide<1-5>{Consider the clustering scenario.}
+  \onslide<6>{A Bayesian approach models this ambiguity}
+  
   \multiinclude[<+->][format=png, start=0, end=4]{img/ambiguous-bayes}
-
-  \only<6>{A Bayesian approach models this ambiguity}
 
 \end{frame}
 
@@ -174,16 +174,16 @@
 
 \end{frame}
 
-\begin{frame}{Work in interactive structure learning}
+\begin{frame}{Work in Bayesian interactive structure learning}
   \begin{itemize}
     \pause
-    \item Flat clustering - \cite{NelsonRevisitingConstraints, ShentalComputingConstraints, LangeLearningData} \\
+    \item Constrained clustering - \cite{Wagstaff2000ClusteringConstraints, NelsonRevisitingConstraints, ShentalComputingConstraints, LangeLearningData} \\
     \pause
     \begin{center}
     \includegraphics[]{img/must-link} \hspace{20pt} \includegraphics[]{img/mustnot-link}
     \end{center}
     \pause
-    \item Hierarchical clustering - \cite{Vikram2016} \pause $\begin{array}{l}\includegraphics{img/overview-digit-1}\end{array}$
+    \item Constrained Bayesian hierarchical clustering - \cite{Vikram2016} \pause $\begin{array}{l}\includegraphics{img/overview-digit-1}\end{array}$
   \end{itemize}
 \end{frame}
 
@@ -218,9 +218,9 @@
   \begin{itemize}
     \pause
     \item Prior distribution $p(\tau)$, (Dirichlet diffusion tree,
-      Kingman's coalescent)
+      Kingman's coalescent, Time-marginalized coalescent)
     \pause
-    \item Likelihood model $P(\bm{x} | \tau)$, (Brownian motion,
+    \item Likelihood model $p(\bm{x} | \tau)$, (Brownian motion,
       Dirichlet-multinomial diffusion)
   %\begin{center}
     %\includegraphics<2>[width=\textwidth]{img/diffusion-1}
@@ -319,7 +319,10 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 \begin{frame}{Results}
   \centering
   \vspace{10pt}
+  \begin{figure}
   \frame{\includegraphics[width=0.8\textwidth]{img/trees/MNIST-result}}
+  \caption*{Results of hierarchical clustering on MNIST}
+  \end{figure}
 \end{frame}
 
 \begin{frame}{Overview}
@@ -329,6 +332,7 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 
 \section{Embedding learning}
 
+\iffalse
 \begin{frame}{Bayesian embedding learning}
   \centering
   What's the difference between embedding and structure learning?
@@ -345,6 +349,7 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
     \end{columns}
   \end{center}
 \end{frame}
+\fi
 
 \begin{frame}{Variational autoencoder}
   The VAE is a generative model for data.
@@ -369,24 +374,24 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   is a viable approach.
 
   \pause
-    Consider a latent variable model with global variables
-    $\theta$, local variables $x$ and observations $y$. Our desired
-    posterior is $p(\theta, x | y)$
+    Consider a latent variable model with latent variable 
+    $x$ and observation $y$. Our desired
+    posterior is $p(x | y)$
 
     \pause
     \textbf{Strategy}: convert inference into optimization
     \begin{itemize}
         \pause
-      \item Instantiate \emph{variational distribution} $q_\phi(\theta, x)$
+      \item Instantiate \emph{variational distribution} $q_\phi(x)$
         where $\phi$ are free parameters
         \pause
-      \item Define objective $\elbo[q_\phi(\theta, x)]$.
+      \item Define objective $\elbo[q_\phi(x)]$.
         \pause
-      \item Maximize objective $\phi^* = \argmax_\phi \elbo[q_\phi(\theta, x)]$
+      \item Maximize objective $\phi^* = \argmax_\phi \elbo[q_\phi(x)]$
     \end{itemize}
     \pause
-    If $q(\theta, x)$ is sufficiently expressive,
-    it can approximate $p(\theta, x | y)$ quite well.
+    If $q(x)$ is sufficiently expressive,
+    it can approximate $p(x | y)$ quite well.
 \end{frame}
 
 \iffalse
@@ -412,7 +417,7 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 \fi
 
 \begin{frame}{Evidence lower bound}
-  This loss function is called the \alert{evidence lower bound} (ELBO).
+  This objective is called the \alert{evidence lower bound} (ELBO).
   
   \pause
   
@@ -421,17 +426,17 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   \pause
   We can rewrite the KL divergence as
   \begin{align*}
-    \KL(q(\theta, x)\|p(\theta, x|y)) &= \int q(\theta, x)\log\frac{q(\theta, x)}{p(\theta, x | y)}d\theta, x \\
+    \KL(q(x)\|p(x|y)) &= \int q(x)\log\frac{q(x)}{p(x | y)}dx \\
     %&= \int q(\theta, x) \left(\log q(\theta, x) - \log p(\theta, x | y)\right)d\theta, x \\
     %&= \int q(\theta, x) \left(\log q(\theta, x) - \log \frac{p(\theta, x, y)}{p(y)}\right)d\theta, x \\
     %&= \int q(\theta, x) \left(\log q(\theta, x) - \log p(\theta, x, y) + \log p(y)\right)d\theta, x \\
-              &= \log p(y) - \E_{q(\theta, x)}\left[\log\frac{p(y, \theta, x)}{q(\theta, x)}\right]
+              &= \log p(y) - \E_{q(x)}\left[\log\frac{p(y, x)}{q(x)}\right]
   \end{align*}
 
   \pause
   
   \begin{align*}
-    \elbo[q(\theta, x)] &\triangleq \E_{q(\theta, z)}\left[\log\frac{p(y, \theta, x)}{q(\theta, x)}\right]
+    \elbo[q(x)] &\triangleq \E_{q(x)}\left[\log\frac{p(y, x)}{q(x)}\right]
   \end{align*}
 \end{frame}
 
@@ -441,7 +446,7 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   \pause
 
   \begin{center}
-      \ovalbox{Pick $q_\phi(x | y)$ to be a \emph{neural network} parameterized by $\phi$}
+      \ovalbox{Pick $q_\phi(x | y)$ (can be conditional) to be a \emph{neural network} parameterized by $\phi$}
   \end{center}
 
   \pause
@@ -736,6 +741,27 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Example: Bayesian logistic regression}
+  \centering
+  \begin{columns}
+    \begin{column}{0.3\textwidth}
+      \includegraphics{tikz/blr}
+    \end{column}
+    \begin{column}{0.3\textwidth}
+      \begin{align*}
+        w &\sim \N(0, I) \\
+        y_i | w, x_i &\sim \mathrm{Bernoulli}(\sigma(w^Tx_i))
+      \end{align*}
+    \end{column}
+  \end{columns}
+  \pause
+  
+  \alert{Problematic message:} $m^{y_i \rightarrow w}$
+  \pause
+  
+  \textbf{Replace with:} $r_\phi(y_i, x_i)$
+\end{frame}
+
 \begin{frame}{Overview}
   \centering
   \includegraphics[width=0.8\textwidth]{img/overview-2}
@@ -767,6 +793,7 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 		from a dataset of trajectories \begin{align*}\bm{\tau} = \{(s^{(i)}_0, a^{(i)}_0, s^{(i)}_1, a^{(i)}_1, \ldots, s^{(i)}_T)\}_{i = 1}^N\end{align*}
 \end{frame}
 
+\iffalse
 \begin{frame}{Bayesian linear dynamical system}
   \begin{columns}
     \begin{column}{0.3\textwidth}
@@ -785,6 +812,7 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 	$
 	which can be computed analytically.
 \end{frame}
+\fi
 
 \begin{frame}{Latent linear dynamical system}
   \begin{columns}
@@ -795,6 +823,7 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
       \begin{align*}
         A, \Sigma &\sim \MNIW(\Psi, \nu, M_0, V) \\
         x_{t + 1} | x_t, a_t, A, \Sigma &\sim \N(A\begin{bmatrix}x_t\\a_t\end{bmatrix}, \Sigma)
+        s_t | x_t &\sim \N(\mu_\gamma(x_t), \Sigma_\gamma(x_t))
       \end{align*}
     \end{column}
   \end{columns}
@@ -848,7 +877,6 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
     Existing work:
     \begin{itemize}
         \item Nested Chinese restaurant process - \cite{Goyal2017NonparametricLearning}
-    \pause
         \item Dirichlet diffusion tree - ?
         \item Kingman Coalescent - ?
         \item Time marginalized coalescent - ?
