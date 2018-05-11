@@ -71,16 +71,15 @@
       \begin{overlayarea}{\textwidth}{7cm}
         \begin{center}
           \Large \textbf{Structure}\\ \vspace{10pt}
-          \multiinclude[<+>][format=png, start=1]{img/bayesian-intro-left}
+          \multiinclude[<+->][format=png, start=1]{img/bayesian-intro-left}
         \end{center}
       \end{overlayarea}
     \end{column}
     \begin{column}{0.5\textwidth}
       \begin{overlayarea}{\textwidth}{5cm}
-        \pause
         \centering
         \Large \textbf{Embedding} \\ \vspace{60pt}
-        \includegraphics[]{img/bayesian-intro-right-1}
+        \onslide<4>{\includegraphics[]{img/bayesian-intro-right-1}}
       \end{overlayarea}
     \end{column}
   \end{columns}
@@ -974,6 +973,5 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
   where $r_\phi$ is a neural network whose output
   is the same shape of a message from a conjugate-exponential child.
 \end{frame}
-
 
 \end{document}
