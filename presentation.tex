@@ -126,9 +126,9 @@
 
 \begin{frame}{Challenge: ambiguity}
   \centering
-  \only<1-5>{Consider the clustering scenario.}
+  \only<1-4>{Consider the clustering scenario.}
   
-  \only<6>{A Bayesian approach models this ambiguity}
+  \only<5>{A Bayesian approach models this ambiguity}
   
   \multiinclude[<+->][format=png, start=0, end=4]{img/ambiguous-bayes}
 
@@ -673,17 +673,18 @@
     \begin{column}{0.3\textwidth}
         \includegraphics{tikz/lblds}
     \end{column}
+    \hspace{10pt}
     \begin{column}{0.6\textwidth}
       \begin{align*}
         A, \Sigma &\sim \MNIW(\Psi, \nu, M_0, V) \\
-        x_{t + 1} | x_t, a_t, A, \Sigma &\sim \N(A\begin{bmatrix}x_t\\a_t\end{bmatrix}, \Sigma)
+        x_{t + 1} | x_t, a_t, A, \Sigma &\sim \N(A\begin{bmatrix}x_t\\a_t\end{bmatrix}, \Sigma) \\
         s_t | x_t &\sim \N(\mu_\gamma(x_t), \Sigma_\gamma(x_t))
       \end{align*}
     \end{column}
   \end{columns}
 	The posterior distribution 
 	$
-	q(A, \Sigma, x_0, \ldots, x_T | {s_0, a_0, \ldots, s_T})
+	p(A, \Sigma, x_0, \ldots, x_T | {s_0, a_0, \ldots, s_T})
 	$
 	is no longer tractable, but can be approximated via NVMP.
 \end{frame}
@@ -701,7 +702,10 @@
     \pause
         \item Learns a mapping from non-linear dynamical system to an LDS
     \pause
-        \item Model-predictive control in the latent space to minimize a cost function
+        \item Model-predictive control in the latent space to minimize a cost function (
+        \href{7.mp4}{demo1},
+        \href{10-2.mp4}{demo2}
+        )
     \end{itemize}
     
     \pause
@@ -721,7 +725,7 @@
   \includegraphics[width=0.8\textwidth]{img/overview-3}
 \end{frame}
 
-\begin{frame}{Hierarchical clustering in latent spaces}
+\begin{frame}{Hierarchical clustering in latent spaces (WIP)}
 
     \begin{center}
         \includegraphics{tikz/ltmc}
@@ -769,28 +773,30 @@
 \begin{frame}{Future work}
     Interactive learning
     \begin{itemize}
-    \pause
         \item Noisy constraints
-    \pause
-        \item Interactive reinforcement learning
-    \pause
-        \item Can interaction improve reinforcement learning?
     \end{itemize}
+        \pause
     
-    Structure embeddings
+    Structured embeddings
     \begin{itemize}
     \pause
         \item Language modeling - latent Markov model
     \pause
         \item More complex dynamical systems - switching states
-    \pause
-        \item Automating amortized inference
     \end{itemize}
-    \pause
+\end{frame}
+
+\begin{frame}{Acknowledgements}
+    \begin{itemize}
+        \item Thanks to my advisor Sanjoy Dasgupta
+        \item Thanks to Gary Cottrell, Julian McAuley, Lawrence Saul 
+        and Zhuowen Tu for serving on my committee
+        \item Thanks to Chris Tosh and Stefanos Poulis for the helpful feedback on the talk
+    \end{itemize}
 \end{frame}
 
 \begin{frame}[standout]
-    Thank you! Any questions?
+Questions?
 \end{frame}
 
 
@@ -798,26 +804,6 @@
     \bibliographystyle{unsrtnat}
     \bibliography{mendeley} 
 \end{frame}
-%\begin{frame}{Messages in SVAE}
-  %The message from a \textbf{non-conjugate, non-exponential family} observation $X$ to a parent $Y$ is
-  %\begin{align*}
-    %m_{X \rightarrow Y} = r_\xi(t_X(X))
-  %\end{align*}
-  %where $r_\xi$ is a neural network whose output
-  %is the same shape of a message from a conjugate-exponential child.
-
-  %\pause
-  %\metroset{block=fill}
-  %\begin{block}{Inference in a SVAE}
-    %\begin{enumerate}
-      %\item For a data $\tau = \{s_0, a_0, s_1, a_1, \ldots, s_T\}$,
-        %perform VMP using SVAE messages
-      %\item Compute the ELBO $\L[q(\{x_i\}_{i = 1}^T, \mu_{\isdmodel}, \Sigma_{\isdmodel}, \dynmat, \dyncovar)]$
-      %\item Update neural networks with $\nabla_{\gamma, \xi} \L[q(\{x_i\}_{i = 1}^T, \mu_{\isdmodel}, \Sigma_{\isdmodel}, \dynmat, \dyncovar)]$
-      %\item Update global parameters ($\mu_{\isdmodel}, \Sigma_{\isdmodel}, \dynmat, \dyncovar$) with natural gradients
-    %\end{enumerate}
-  %\end{block}
-%\end{frame}
 \appendix
 \begin{frame}{Intelligent subset queries}
 
@@ -978,6 +964,15 @@ Instantiate $L$ subsets randomly and pick the one with the highest variance.
 
 \pause
 \textbf{Drawbacks:} can be underexpressive (conjugate-exponential requirement)
+\end{frame}
+
+\begin{frame}{Messages in SVAE}
+  The message from a \textbf{non-conjugate, non-exponential family} observation $X$ to a parent $Y$ is
+  \begin{align*}
+    m_{X \rightarrow Y} = r_\phi(t_X(X))
+  \end{align*}
+  where $r_\phi$ is a neural network whose output
+  is the same shape of a message from a conjugate-exponential child.
 \end{frame}
 
 
